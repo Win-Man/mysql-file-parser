@@ -42,21 +42,3 @@ class MyBinlog():
 if __name__ == '__main__':
     my = MyBinlog('mysql-bin.000002')
     my.iter_event()
-    #print int('00000078',16)
-    # single_binlog_parse('mysql-bin.000002')
-    # print hex_to_str('12345678')
-    # with open('mysql-bin.000002','rb') as f:
-    #     bin_hex = f.read().encode('hex')
-    #     print bin_hex[0:8]
-    #     print "timestamp:%s" % bin_hex[8:16] # +8
-    #     print "type_code:%s" % bin_hex[16:18] # +2
-    #     print "server_id:%s" % bin_hex[18:26] # +8
-    #     print "event_length:%s" % bin_hex[26:34] # +8
-    #     print "next_position:%s" % bin_hex[34:42] # +8
-    #     print "flags:%s" % bin_hex[42:46]
-    #     print "extra_headers:"
-    #     print '80188'.encode('hex')
-    #     print "timestamp:%s" % bin_hex[240:248]
-    #     print "type_code:%s" % bin_hex[248:250]
-    #     print "server_id:%s" % bin_hex[250:258]
-    #     print "event_length:%s" % bin_hex[258:266]
