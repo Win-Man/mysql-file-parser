@@ -8,5 +8,5 @@
 from binlog_parse.MyBinlog import MyBinlog
 
 if __name__ == '__main__':
-    my = MyBinlog('../mysql-bin.000004')
+    my = MyBinlog('../mysql-bin.000012')
     my.iter_event()
