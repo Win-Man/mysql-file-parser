@@ -31,7 +31,7 @@ class MyEvent():
             self.event['name'] = 'STOP EVENT'
             self.__stop_event__(event_hex)
         elif hex_to_int(self.event['type_code']) == 4:
-            self.event['name'] = 'RORATE EVENT'
+            self.event['name'] = 'ROTATE EVENT'
             self.__rotate_event__(event_hex)
         elif hex_to_int(self.event['type_code']) == 5:
             self.event['name'] = 'INTVAR EVENT'
@@ -164,6 +164,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
         self.event['xid'] = hex_to_int(hex_to_str(event_hex[38:54]))
         self.event['unknow'] = event_hex[54:]
 
@@ -174,6 +175,8 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
+        self.event['unknow'] = event_hex[38:]
 
     def __gtid_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -182,7 +185,8 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
-        self.event['unknow'] = event_hex[38:]
+        self.event['extra_headers'] = event_hex[38:122]
+        self.event['unknow'] = event_hex[122:]
 
     def __rotate_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -191,10 +195,9 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
-        self.event['unknow1'] = event_hex[38:54]
+        self.event['extra_headers'] = event_hex[38:54]
         self.event['next_binlog_file_name'] = hex_to_ascii(event_hex[54:86])
-        self.event['unknow2'] = event_hex[86:]
-        print self.event
+        self.event['pos'] = hex_to_int(hex_to_str(event_hex[86:102]))
 
     def __unknow_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -203,6 +206,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:150]
 
 
     def __start_event_v3(self,event_hex):
@@ -212,6 +216,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:64]
 
     def __query_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -220,6 +225,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __stop_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -228,6 +234,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:54]
 
     def __intvar_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -236,6 +243,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __load_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -244,6 +252,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:74]
 
     def __slave_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -252,6 +261,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __create_file_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -260,6 +270,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:46]
 
     def __append_block_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -268,6 +279,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:46]
 
     def __exec_load_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -276,6 +288,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:46]
 
     def __delete_file_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -284,6 +297,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:46]
 
     def __new_load_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -292,6 +306,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:74]
 
     def __rand_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -300,6 +315,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __user_var_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -308,6 +324,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __begin_load_query_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -316,6 +333,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:46]
 
     def __execute_load_query_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -324,6 +342,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:64]
 
     def __table_map_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -332,6 +351,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:54]
 
     def __pre_ga_write_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -340,6 +360,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __pre_ga_update_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -348,6 +369,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __pre_ga_delete_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -356,6 +378,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __write_rows_event_v1__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -364,6 +387,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:54]
 
     def __update_rows_event_v1__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -372,6 +396,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:54]
 
     def __delete_rows_event_v1__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -380,6 +405,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:54]
 
     def __incident_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -388,6 +414,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:42]
 
     def __heartbeat_log_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -396,6 +423,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __ignorable_log_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -404,6 +432,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __rows_query_log_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -412,6 +441,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __write_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -420,6 +450,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:58]
 
     def __update_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -428,6 +459,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:58]
 
     def __delete_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -436,6 +468,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:58]
 
     def __anonymous_gtid_log_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -444,6 +477,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:122]
 
     def __transaction_context_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -452,6 +486,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:74]
 
     def __view_change_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -460,6 +495,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = event_hex[38:142]
 
     def __xa_prepare_log_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
@@ -468,6 +504,7 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
+        self.event['extra_headers'] = None
 
     def __print_event__(self):
         if self.event != None:
