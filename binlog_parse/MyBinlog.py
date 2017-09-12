@@ -23,7 +23,7 @@ class MyBinlog():
         event_postion = 4
         while event_postion + 1 <= self.filesize:
             next_event_position = self.get_next_event_position(event_postion)
-            print 'event_position:%d next_position:%d filesize:%d' % (event_postion,next_event_position, self.filesize)
+            #print 'event_position:%d next_position:%d filesize:%d' % (event_postion,next_event_position, self.filesize)
             #print "next_position:%d" %(next_event_position)
             self.parse_event(event_postion, next_event_position)
             event_postion = next_event_position

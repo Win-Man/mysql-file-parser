@@ -67,7 +67,7 @@ class MyEvent():
             self.event['name'] = 'FORMAT DESCRIPTION EVENT'
             self.__format_description_event__(event_hex)
         elif hex_to_int(self.event['type_code']) == 16 :
-            self.event['name'] = 'XID EVENT EVENT'
+            self.event['name'] = 'XID EVENT'
             self.__xid_event__(event_hex)
         elif hex_to_int(self.event['type_code']) == 17:
             self.event['name'] = 'BEGIN LOAD QUERY EVENT'
@@ -140,6 +140,9 @@ class MyEvent():
         if self.event != None:
             print self.event
 
+    # BINLOG_CHECKSUM_LEN = 4
+    # BINLOG_CHECKSUM_ALG_DESC_LEN = 1
+    # format_description_event的checksum是5个字节的，其他的event的checksum是4个字节的
     def __format_description_event__(self,event_hex):
         # event_header
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])),"%Y-%m-%d %H:%M:%S")
@@ -154,7 +157,8 @@ class MyEvent():
         #self.event['server_version'] = event_hex[42:142] # 不用倒序，
         self.event['create_timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[142:150])), "%Y-%m-%d %H:%M:%S") #4
         self.event['header_length'] = hex_to_int(hex_to_str(event_hex[150:152]))
-        self.event['unknow'] = event_hex[152:]
+        self.event['post_header_len'] = event_hex[152:228]
+        self.event['check_sum'] = event_hex[228:]
 
     def __xid_event__(self,event_hex):
         # event_header
@@ -166,7 +170,7 @@ class MyEvent():
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
         self.event['extra_headers'] = None
         self.event['xid'] = hex_to_int(hex_to_str(event_hex[38:54]))
-        self.event['unknow'] = event_hex[54:]
+        self.event['check_sum'] = event_hex[54:]
 
     def __previous_gtids_log_event(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")

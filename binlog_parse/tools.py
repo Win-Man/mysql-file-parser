@@ -33,3 +33,9 @@ def hex_to_ascii(hex_str):
     for i in range(len(hex_str)/2):
         res.append(chr(int(hex_str[i*2:i*2+2],16)))
     return ''.join(res)
+
+def packed_integer(hex_str):
+    print hex_to_int(hex_str)
+
+if __name__ == '__main__':
+    packed_integer('0100000000000000')
