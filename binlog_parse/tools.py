@@ -19,9 +19,7 @@ def hex_to_int(hex_str):
     try:
         res = int(hex_str,16)
     except Exception as e:
-        print "###################"
-        print 'hex_str:%s' %(hex_str)
-        print "###################"
+        print 'convert hex to int failed!!!\nThe string is %s.' %(hex_str)
     return res
 
 def timestamp_to_str(timestamp,format):
