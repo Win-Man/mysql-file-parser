@@ -35,5 +35,74 @@ def hex_to_ascii(hex_str):
 def packed_integer(hex_str):
     print hex_to_int(hex_str)
 
+def get_packaged_int(hex_str):
+    first_byte = hex_to_int(hex_str[:2])
+    if first_byte <= 250:
+        return (1,first_byte)
+    elif first_byte == 252:
+        return (2,hex_to_int(hex_to_str(hex_str[:4])))
+    elif first_byte == 253:
+        return (3,hex_to_int(hex_to_str(hex_str[:6])))
+    elif first_byte == 254:
+        return (8,hex_to_int(hex_to_str(hex_str[:8])))
+    else:
+        return None
+
+def get_column_type_and_metadata(flag):
+    if flag == 0:
+        return ['MYSQL_TYPE_DECIMAL',0]
+    elif flag == 1:
+        return ['MYSQL_TYPE_TINY',0]
+    elif flag == 2:
+        return ['MYSQL_TYPE_SHORT', 0]
+    elif flag == 3:
+        return ['MYSQL_TYPE_LONG', 0]
+    elif flag == 4:
+        return ['MYSQL_TYPE_FLOAT', 1]
+    elif flag == 5:
+        return ['MYSQL_TYPE_DOUBLE', 1]
+    elif flag == 6:
+        return ['MYSQL_TYPE_NULL', 0]
+    elif flag == 7:
+        return ['MYSQL_TYPE_TIMESTAMP', 0]
+    elif flag == 8:
+        return ['MYSQL_TYPE_LONGLONG', 0]
+    elif flag == 9:
+        return ['MYSQL_TYPE_INT24', 0]
+    elif flag == 10:
+        return ['MYSQL_TYPE_DATE', 0]
+    elif flag == 11:
+        return ['MYSQL_TYPE_TIME', 0]
+    elif flag == 12:
+        return ['MYSQL_TYPE_DATETIME', 0]
+    elif flag == 13:
+        return ['MYSQL_TYPE_YEAR', 0]
+    elif flag == 14:
+        return ['MYSQL_TYPE_NEWDATE', 0]
+    elif flag == 15:
+        return ['MYSQL_TYPE_VARCHAR', 2]
+    elif flag == 16:
+        return ['MYSQL_TYPE_BIT', 2]
+    elif flag == 246:
+        return ['MYSQL_TYPE_NEWDECIMAL', 2]
+    elif flag == 247:
+        return ['MYSQL_TYPE_ENUM', 0]
+    elif flag == 248:
+        return ['MYSQL_TYPE_SET', 0]
+    elif flag == 249:
+        return ['MYSQL_TYPE_TINY_BLOB', 0]
+    elif flag == 250:
+        return ['MYSQL_TYPE_MEDIUM_BLOB', 0]
+    elif flag == 251:
+        return ['MYSQL_TYPE_LONG_BLOB', 0]
+    elif flag == 252:
+        return ['MYSQL_TYPE_BLOB', 1]
+    elif flag == 253:
+        return ['MYSQL_TYPE_VAR_STRING', 2]
+    elif flag == 254:
+        return ['MYSQL_TYPE_STRING', 2]
+    elif flag == 255:
+        return ['MYSQL_TYPE_GEOMETRY', 1]
+
 if __name__ == '__main__':
     packed_integer('0100000000000000')

@@ -347,6 +347,7 @@ class MyEvent():
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
         self.event['extra_headers'] = event_hex[38:64]
 
+    # 多表连接查询
     def __table_map_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
         self.event['type_code'] = hex_to_int(hex_to_str(event_hex[8:10]))
@@ -354,7 +355,33 @@ class MyEvent():
         self.event['event_length'] = hex_to_int(hex_to_str(event_hex[18:26]))
         self.event['next_position'] = hex_to_int(hex_to_str(event_hex[26:34]))
         self.event['flags'] = hex_to_int(hex_to_str(event_hex[34:38]))
-        self.event['extra_headers'] = event_hex[38:54]
+        ##extra header begin
+        self.event['table_id'] = hex_to_int(hex_to_str(event_hex[38:50]))
+        self.event['reserved_flags'] = event_hex[50:54]
+        ##extra header end
+        database_bytes_count,database_name_length = get_packaged_int(event_hex[54:70])
+        database_bytes_offset = 54+database_bytes_count*2
+        database_name_offset = 54+database_bytes_count*2+database_name_length*2+2
+        self.event['database_name'] = hex_to_ascii(event_hex[database_bytes_offset:database_name_offset-2])
+        table_bytes_count,table_name_length = get_packaged_int(event_hex[database_name_offset:database_name_offset+16])
+        table_bytes_offset = database_name_offset + table_bytes_count*2
+        table_name_offset = database_name_offset + table_bytes_count*2 + table_name_length*2 + 2
+        self.event['table_name'] = hex_to_ascii(event_hex[table_bytes_offset:table_name_offset-2])
+        column_bytes_count,self.event['column_count'] = get_packaged_int(event_hex[table_name_offset:table_name_offset+16])
+        self.event['column_type'] = []
+        column_bytes_offset = table_name_offset + column_bytes_count*2
+        column_type_offset = table_name_offset + (column_bytes_count+self.event['column_count'])*2
+        for i in xrange(self.event['column_count']):
+            self.event['column_type'].append(get_column_type_and_metadata(hex_to_int(event_hex[column_bytes_offset+i*2:column_bytes_offset+i*2+2])))
+        metadata_bytes_count,metadata_length = get_packaged_int(event_hex[column_bytes_offset:column_bytes_offset+16])
+        metadata_bytes_offset = column_type_offset + metadata_bytes_count*2
+        metadata_offset = column_type_offset + metadata_bytes_count*2
+        for item in self.event['column_type']:
+            item.append(event_hex[metadata_offset:metadata_offset+item[1]*2])
+            metadata_offset = metadata_offset + item[1]*2
+        null_bits_bytes_count = (self.event['column_count'] + 7)/8
+        self.event['null_bits'] = event_hex[metadata_offset:metadata_offset+null_bits_bytes_count*2]
+        self.event['check_sum'] = event_hex[-8:]
 
     def __pre_ga_write_rows_event__(self,event_hex):
         self.event['timestamp'] = timestamp_to_str(hex_to_int(hex_to_str(event_hex[0:8])), "%Y-%m-%d %H:%M:%S")
